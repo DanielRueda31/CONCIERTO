@@ -223,6 +223,68 @@
     window.onload = cambiarCancion;
   
   </script>
+
+   <!-------------- DUKI Y DUKILOVERS  ---------------------->
+  
+ <!-- duki -->
+ <a-entity id="dukimovil" position="0 0 -0.1">
+    <!-- Cabeza -->
+    <a-sphere radius="0.15" position="0 2.1 -3" rotation="0 -80 0 " material="src: imagenes/cara.jpg" shadow="cast: true"></a-sphere>
+    <!-- Cuerpo -->
+    <a-cylinder position="0 1.75 -3" rotation="0 -170 0" radius="0.1" height="0.5" material="src: imagenes/torso.jpg"></a-cylinder>
+    <!-- Brazos -->
+    <a-cylinder position="-0.2 1.82 -3" rotation="0 0 130" radius="0.04" height="0.5" color="#FFDAB9"></a-cylinder>
+    <a-cylinder position="0.2 1.82 -3" rotation="0 0 -130" radius="0.04" height="0.5" color="#FFDAB9"></a-cylinder>
+    <!-- Piernas -->
+    <a-cylinder position="-0.14 1.3 -3" rotation="0 0 160" radius="0.05" height="0.5" color="#6E7B8B"></a-cylinder>
+    <a-cylinder position="0.14 1.3 -3" rotation="0 0 -160" radius="0.05" height="0.5" color="#6E7B8B"></a-cylinder>
+    <a-sphere color="black" radius="0.09" position="-0.19 1.1 -2.98"></a-sphere>
+    <a-sphere color="black" radius="0.09" position="0.19 1.1 -2.98"></a-sphere>
+    </a-entity>
+   
+    <!-- Micrófono y tripoide-->
+    <a-entity id="microphone" position="0 1 -2.7">
+    <!-- Trípode -->
+    <a-cylinder color="#CD7F32" height="1" radius="0.03"  position="0 0.5 0"></a-cylinder>
+    <a-cylinder color="#CD7F32" height="0.1" radius="0.05" position="0 1 0"></a-cylinder>        
+    <!-- Micrófono -->
+    <a-cylinder color="#C0C0C0" height="0.2" radius="0.02" position="0 1.08 0" rotation="110 0 10"></a-cylinder>  
+    <a-sphere color="black" radius="0.04" position="0 1.12 -0.10"></a-sphere>
+    </a-entity>
+            
+    <script>
+    AFRAME.registerComponent('move', {
+    schema: {
+      speed: { type: 'number', default: 0.001 }
+    },
+    init: function () {
+      this.direction = 1; // Comienza moviéndose hacia la derecha
+      this.maxPositionX = 1; // Límite derecho
+      this.minPositionX = -1; // Límite izquierdo
+    },
+    tick: function (time, timeDelta) {
+    const el = this.el;
+    const position = el.getAttribute('position');  
+    // Calcular nueva posición
+    let newPositionX = position.x + this.direction * this.data.speed * timeDelta;
+    // Verificar si la nueva posición está dentro de los límites
+    if (newPositionX > this.maxPositionX) {
+        newPositionX = this.maxPositionX;
+        this.direction = -1; // Cambiar dirección hacia la izquierda
+      } else if (newPositionX < this.minPositionX) {
+        newPositionX = this.minPositionX;
+        this.direction = 1; // Cambiar dirección hacia la derecha
+      }
+    // Actualizar posición
+    el.setAttribute('position', { x: newPositionX, y: position.y, z: position.z });
+    }
+    });
+    
+    document.querySelector('#dukimovil').setAttribute('move', {speed: 0.0005});
+    document.querySelector('#microphone').setAttribute('move', {speed: 0.0005});
+    </script>
+
+    
     </a-scene>
 </body>
 </html>

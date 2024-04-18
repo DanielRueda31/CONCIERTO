@@ -31,7 +31,68 @@
    <a-entity geometry="primitive: cylinder; radius: 15; height: 0.5; thetaLength: 180; " position="0 6 -15" rotation="0 90 90" material="color: #D3D3D3; side: double; opacity: 0.5 transparent: true;"></a-entity>        
    <!-- enrejado -->
    <a-entity geometry="primitive: cylinder; radius: 2; height: 29; thetaLength: 30; openEnded: true;" position="0 0.1 -3.5" rotation="0 0 90" material="color: #D3D3D3;  opacity: 0.25 side: double; wireframe: true;"></a-entity>
-           
+
+
+    <!------------------ESCENARIO------------------->
+
+  <!----------SUELOS DEL ESCENARIO ------------>
+
+      <!--  escenario suelo  Grande   -->
+  <a-box width="10" height="1" depth="5" position="0 0.5 -7" material="color: black" shadow="cast: true"></a-box>
+  <a-box width="3" height="1" depth="2" position="0 0.5 -3.5" material="color: black" shadow="cast: true"></a-box>
+  <!-- escenario suelo pequeño   -->
+  <a-box width="10" height="0.03" depth="5" position="0 1.01 -7" color="#333333" shadow="cast: true"></a-box>
+  <a-box width="3" height="0.03" depth="2" position="0 1.01 -3.5" color="#333333" shadow="cast: true"></a-box>
+
+  <!----------PARTE SUPERIOR y TRASERA DEL ESCENARIO DEL ESCENARIO   ------------>
+
+  <a-box width="18" height="0.80" depth="6" position="0 5 -7" material="color: #D3D3D3" shadow="cast: true"></a-box>
+  <a-plane width="10" height="4" material="src: imagenes/pantalla.mp4" rotation="0 0 0" position="0 2.8 -9.5" ></a-plane>
+  <a-entity position="-0.5 0.7 -4.5" text="value: #MODO DIABLO; color: red; width: 8; font: mozillavr"></a-entity>
+  <a-entity position="3.5 0.7 -2.5" text="value: DUKI; color: red; width: 8; font: mozillavr" ></a-entity>
+  <a-entity position="6 0.7 -4.5" text="value: A.D.A TOUR; color: red; width: 8; font: mozillavr"></a-entity>
+
+  <!-------------- COLUMNAS LATERALES DEL ESCENARIO -------------->
+
+  <script>
+    // Define las variables para el tamaño y la separación de las columnas
+    const defaultHeight = 0.5;
+    const rotatedHeight = 0.65; // Altura mayor para los cilindros rotados
+    const columnSpacing = 0.44;
+    const cylinderHeight = 0.44;
+    // Bucle para generar las columnas
+    for (let i = 0; i <= 10; i++) {
+    // Calcula la posición en Y de la columna
+    let yPos = i * columnSpacing;         
+    // Determina si la rotación debe ser positiva o negativa
+    let rotation = (i % 2 === 0) ? "-45" : "45";     
+    // Determina la altura del cilindro
+    let height = (rotation === "45" || rotation === "-45") ? rotatedHeight : defaultHeight;     
+    // Genera el HTML para la columna con la posición, rotación y altura calculados
+    document.write(`<a-cylinder radius="0.02" height="${cylinderHeight}" position="-5.02 ${yPos} -4.5" material="color: #C0C0C0" shadow="cast: true"></a-cylinder>`);
+    document.write(`<a-cylinder radius="0.02" height="${cylinderHeight}" position="-5.52 ${yPos} -4.5" material="color: #C0C0C0" shadow="cast: true"></a-cylinder>`);
+    document.write(`<a-cylinder radius="0.02" height="${height}" position="-5.28 ${yPos + 0.25} -4.5" rotation="0 0 90" material="color: #C0C0C0" shadow="cast: true"></a-cylinder>`);
+    document.write(`<a-cylinder radius="0.02" height="${height}" position="-5.25 ${yPos} -4.5" rotation="0 0 ${rotation}" material="color: #C0C0C0" shadow="cast: true"></a-cylinder>`);
+    }
+    </script>
+          
+  <script>  
+  // Bucle para generar las columnas
+  for (let i = 0; i <= 10; i++) {
+  // Calcula la posición en Y de la columna
+  let yPos = i * columnSpacing;     
+  // Determina si la rotación debe ser positiva o negativa
+  let rotation = (i % 2 === 0) ? "-45" : "45";        
+  // Determina la altura del cilindro
+  let height = (rotation === "45" || rotation === "-45") ? rotatedHeight : defaultHeight;        
+  // Genera el HTML para la columna con la posición, rotación y altura calculados
+  document.write(`<a-cylinder radius="0.02" height="${cylinderHeight}" position="5.02 ${yPos} -4.5" material="color: #C0C0C0" shadow="cast: true"></a-cylinder>`);
+  document.write(`<a-cylinder radius="0.02" height="${cylinderHeight}" position="5.52 ${yPos} -4.5" material="color: #C0C0C0" shadow="cast: true"></a-cylinder>`);
+  document.write(`<a-cylinder radius="0.02" height="${height}" position="5.28 ${yPos + 0.25} -4.5" rotation="0 0 90" material="color: #C0C0C0" shadow="cast: true"></a-cylinder>`);
+  document.write(`<a-cylinder radius="0.02" height="${height}" position="5.25 ${yPos} -4.5" rotation="0 0 ${rotation}" material="color: #C0C0C0" shadow="cast: true"></a-cylinder>`);
+  }
+  </script>
+  
     </a-scene>
 </body>
 </html>

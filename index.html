@@ -92,7 +92,137 @@
   document.write(`<a-cylinder radius="0.02" height="${height}" position="5.25 ${yPos} -4.5" rotation="0 0 ${rotation}" material="color: #C0C0C0" shadow="cast: true"></a-cylinder>`);
   }
   </script>
+
+       
+  <!-------------- LUCES SUPERIORES DEL ESCENARIO  ---------------------->
+
+  <!-- Luz ambiental -->
+  <a-light type="ambient" color="#FFFFFF" intensity="0.5"></a-light>
+  <a-entity id="luces" ></a-entity>
+  <script>
+  // Función para generar un color aleatorio
+  function getRandomColor() {
+  var letters = '0123456789ABCDEF';
+  var color = '#';
+  for (var i = 0; i < 6; i++) {
+  color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+  }
+  // Crear esferas y luces con separación de 0.5 entre ellas
+  for (var i = 1; i <= 5; i++) {
+  // Crear esfera
+  var sphere = document.createElement('a-sphere');
+  sphere.setAttribute('radius', '0.05');
+  sphere.setAttribute('position', (-5.5 + i * 2) + ' 4.25 -5');
+  sphere.setAttribute('color', getRandomColor());
+  document.querySelector('#luces').appendChild(sphere);
+  // Crear caja detrás de la esfera
+  var box = document.createElement('a-box');
+  box.setAttribute('width', '0.2'); // Ancho ajustado a 0.1
+  box.setAttribute('height', '0.2'); // Alto ajustado a 0.1
+  box.setAttribute('depth', '0.2'); // Profundidad ajustada a 0.1
+  box.setAttribute('position', (-5.5 + i * 2) + ' 4.25 -5.10'); // Ajustar la posición detrás de la esfera
+  box.setAttribute('color', 'black'); // Cambiar el color según sea necesario
+  document.querySelector('#luces').appendChild(box);
+  // Crear luz
+  var light = document.createElement('a-light');
+  light.setAttribute('type', 'point');
+  light.setAttribute('position', (-5.5 + i * 2) + ' 4.25 -5');
+  light.setAttribute('intensity', '0.6');
+  light.setAttribute('color-sync', '');
+  document.querySelector('#luces').appendChild(light);
+  }
+
+  // Función para cambiar el color de las esferas y las luces generadas de forma aleatoria cada cierto tiempo
+  function changeColor() {
+  var spheres = document.querySelectorAll('#luces a-sphere');
+  var lights = document.querySelectorAll('#luces a-light');
+  spheres.forEach(function(sphere) {
+  var randomColor = getRandomColor(); // Generar un color aleatorio
+  sphere.setAttribute('color', randomColor); // Aplicar el color aleatorio a la esfera
+  });
+  lights.forEach(function(light) {
+  var randomColor = getRandomColor(); // Generar un color aleatorio
+  light.setAttribute('color', randomColor); // Aplicar el mismo color aleatorio a la luz
+  });
+  }
+  // Cambiar el color de las esferas y las luces generadas cada 3 segundos
+  setInterval(changeColor, 900);
+  </script>
   
+  <!-------------- BOCINAS  ---------------------->
+
+  <!-------bocinas izquierdas----------->
+<script>
+    // Define las posiciones de las bocinas izquierdas
+    const leftSpeakerPositions = [
+      { x: -6.1, y: 0.5 },
+      { x: -7.14, y: 0.5 },
+      { x: -8.16, y: 0.5 },
+      { x: -6.1, y: 2.05 },
+      { x: -7.14, y: 2.05 },
+      { x: -8.16, y: 2.05 }
+    ];
+  
+    // Genera las bocinas izquierdas
+    leftSpeakerPositions.forEach(pos => {
+    document.write(`
+    <a-box width="1" height="1.5" depth="1" position="${pos.x} ${pos.y} -4.5" material="color: black" shadow="cast: true"></a-box>
+    <a-circle radius="0.1" position="${pos.x - 0.01} ${pos.y - 0.2} -3.99" material="color: #808080"></a-circle>
+    <a-circle radius="0.1" position="${pos.x - 0.01} ${pos.y + 0.3} -3.99" material="color: #808080"></a-circle>
+    `);
+    });
+  </script>
+  
+  <!----------BOCINAS derechas------------>
+  <script>
+    // Define las posiciones de las bocinas derechas
+    const rightSpeakerPositions = [
+      { x: 6.1, y: 0.5 },
+      { x: 7.14, y: 0.5 },
+      { x: 8.16, y: 0.5 },
+      { x: 6.1, y: 2.05 },
+      { x: 7.14, y: 2.05 },
+      { x: 8.16, y: 2.05 }
+    ];
+  
+    // Genera las bocinas derechas
+    rightSpeakerPositions.forEach(pos => {
+    document.write(`
+    <a-box width="1" height="1.5" depth="1" position="${pos.x} ${pos.y} -4.5" material="color: black" shadow="cast: true"></a-box>
+    <a-circle radius="0.1" position="${pos.x + 0.01} ${pos.y - 0.2} -3.99" material="color: #808080"></a-circle>
+    <a-circle radius="0.1" position="${pos.x + 0.01} ${pos.y + 0.3} -3.99" material="color: #808080"></a-circle>
+    `);
+    });
+  </script>
+  
+  <a-sound id="left-speaker" src="/musica/DUKI  Malbec.mp3" position="-6.09 0.5 -3.99" autoplay="true" volume="10"></a-sound>
+  <a-sound id="right-speaker" src="/musica/DUKI  Malbec.mp3" position="6.09 0.5 -3.99" autoplay="true" volume="10"></a-sound>
+  
+  <script>
+    // Lista de canciones
+    var canciones = ["musica/DUKI  Malbec.mp3", "musica/Vuelta a la Luna Remix DUKI.mp3", "musica/YSY A FT DUKI - NO DA MAS.mp3", 
+    "musica/Duki  Hello Cotto.mp3", "musica/DUKI  Rockstar.mp3", "musica/DUKI  antes de perderte OG.mp3", "musica/duki NO SON KLLE (Video Oficial).mp3"];
+    var indexCancion = -1; // Índice de la canción actual
+  
+    // Función para cambiar a la siguiente canción
+    function cambiarCancion() {
+      indexCancion = (indexCancion + 1) % canciones.length; // Avanza al siguiente índice circularmente
+      var nuevaCancion = canciones[indexCancion]; // Obtiene la nueva canción
+      document.getElementById('left-speaker').setAttribute('src', nuevaCancion); // Cambia la canción en la bocina izquierda
+      document.getElementById('right-speaker').setAttribute('src', nuevaCancion); // Cambia la canción en la bocina derecha
+    }
+  
+    // Escucha el evento 'sound-ended' para la bocina izquierda
+    document.getElementById('left-speaker').addEventListener('sound-ended', cambiarCancion);
+    // Escucha el evento 'sound-ended' para la bocina derecha
+    document.getElementById('right-speaker').addEventListener('sound-ended', cambiarCancion);
+  
+    // Llama a la función cambiarCancion al cargar la página para iniciar la reproducción
+    window.onload = cambiarCancion;
+  
+  </script>
     </a-scene>
 </body>
 </html>

@@ -283,8 +283,67 @@
     document.querySelector('#dukimovil').setAttribute('move', {speed: 0.0005});
     document.querySelector('#microphone').setAttribute('move', {speed: 0.0005});
     </script>
-
-    
-    </a-scene>
-</body>
-</html>
+<!--------- DUKI LOVERS---------->
+<a-entity id="contenedor" position="0 -1.1 8">
+    <!-- Utilizar un bucle para generar el conjunto -->
+    <script>
+    // Número de filas y columnas
+    var filas = 8;
+    var columnas = 8;      
+    // Espaciado entre las entidades
+   var espaciado = 1.5;       
+    // Definir la entidad original
+    var personaOriginal = document.createElement('a-entity');
+    personaOriginal.innerHTML = `
+    <!-- Cabeza -->
+    <a-sphere radius="0.15" position="0 2.1 -3" rotation="0 75 0" material="src: imagenes/cara2.jpg" shadow="cast: true"></a-sphere>
+    <!-- Cuerpo -->
+    <a-cylinder position="0 1.75 -3" rotation="0 -20 0" radius="0.1" height="0.5" material="src: imagenes/torsofan.jpg"></a-cylinder>
+    <!-- Brazos -->
+    <a-cylinder position="-0.2 1.82 -3" rotation="0 0 130" radius="0.04" height="0.5" color="#FFDAB9"></a-cylinder>
+    <a-cylinder position="0.2 1.82 -3" rotation="0 0 -130" radius="0.04" height="0.5" color="#FFDAB9"></a-cylinder>
+    <!-- Piernas -->
+    <a-cylinder position="-0.14 1.3 -3" rotation="0 0 160" radius="0.05" height="0.5" color="#A52A2A"></a-cylinder>
+    <a-cylinder position="0.14 1.3 -3" rotation="0 0 -160" radius="0.05" height="0.5" color="#A52A2A"></a-cylinder>
+    <a-sphere color="black" radius="0.09" position="-0.24 1.1 -3.01"></a-sphere>
+    <a-sphere color="black" radius="0.09" position="0.23 1.1 -3.01"></a-sphere>
+    `;
+          
+    // Bucle para crear el conjunto
+    for (var i = 0; i < filas; i++) {
+    for (var j = 0; j < columnas; j++) {
+    // Clonar la entidad original y ajustar su posición
+    var persona = personaOriginal.cloneNode(true);
+    var posicionX = (i * espaciado - (filas / 2 * espaciado));
+    var posicionZ = (j * espaciado - (columnas / 2 * espaciado));
+    persona.setAttribute('position', posicionX + ' 0 ' + posicionZ);
+    // Agregar animación de salto
+    persona.setAttribute('animation', {
+    property: 'position',
+    to: posicionX + ' 0.5 ' + posicionZ, // Saltar hacia arriba sin moverse hacia el centro
+    loop: true,
+    dir: 'alternate',
+    easing: 'easeInOutQuad',
+    dur: 1000,
+    startEvents: 'jump'
+    });
+    // Eliminar el componente 'look-controls' para evitar el movimiento del mouse
+    persona.removeAttribute('look-controls');
+    document.getElementById('contenedor').appendChild(persona);      
+    // Iniciar la animación de salto con un pequeño retraso aleatorio
+    setTimeout(function(entity) {
+    entity.emit('jump');
+    }, Math.random() * 2000, persona);
+    }
+    }
+    </script>
+    </a-entity>
+  
+  
+   
+  
+  
+      </a-scene>
+  </body>
+  </html>
+  

@@ -341,6 +341,103 @@
   
   
    
+    <!-- Cámara principal -->
+    <a-entity id="mainCamera" camera="active: true" wasd-controls look-controls position="0 2 0" ></a-entity>
+  <!-- Contenedor para el dron -->
+  <a-entity id="dronContainer" position="0 5 4" rotation="-20 0 0">
+    <!-- DRON CON CAMARA -->
+    <a-entity id="dron">
+        <a-box width="1" height="1" depth="0.5" position="0 5.5 4" material="color: black" shadow="cast: true"></a-box>
+        <a-box width="2.5" height="0.5" depth="0.1" position="0 5.5 4" material="color: black" shadow="cast: true"></a-box>
+
+        <!-- Añade la nueva cámara -->
+        <a-entity id="cameraDrone" camera="active: false" look-controls></a-entity>
+    </a-entity>
+</a-entity>
+<script>
+  // Obtener referencia a la cámara principal y la del dron
+  var mainCamera = document.getElementById('mainCamera');
+  var cameraDrone = document.getElementById('cameraDrone');
+  var dronContainer = document.getElementById('dronContainer');
+
+  // Función para cambiar a la cámara del dron al presionar la tecla "c"
+  function activateDroneCamera() {
+      mainCamera.setAttribute('camera', 'active', false);
+      cameraDrone.setAttribute('camera', 'active', true);
+  }
+
+  // Función para regresar a la cámara principal al presionar la tecla "p"
+  function activateMainCamera() {
+      mainCamera.setAttribute('camera', 'active', true);
+      cameraDrone.setAttribute('camera', 'active', false);
+  }
+
+  // Agregar un listener de evento para detectar cuando se presiona la tecla "c" o "p"
+  document.addEventListener('keydown', function(event) {
+      if (event.key === 'c') {
+          activateDroneCamera();
+      } else if (event.key === 'p') {
+          activateMainCamera();
+      }
+  });
+
+  //  ANIMACION Y MOVIMIENTO DEL DRON 
+  AFRAME.registerComponent('move-drone', {
+      schema: {
+          speed: { type: 'number', default: 0.001 }
+      },
+      init: function () {
+          this.direction = 1; // Comienza moviéndose hacia la derecha
+          this.maxPositionX = 5; // Límite derecho
+          this.minPositionX = -5; // Límite izquierdo
+          this.maxPositionZ = 9; // Límite hacia atrás
+          this.minPositionZ = 4; // Límite hacia adelante
+          this.rotationStart = -20; // Rotación inicial
+          this.rotationEnd = -60; // Rotación final
+          this.rotationDirection = 1; // Dirección de rotación inicial (incrementar)
+      },
+      tick: function (time, timeDelta) {
+          const el = this.el;
+          const position = el.getAttribute('position');
+          const rotation = el.getAttribute('rotation');
+
+          // Calcular nueva posición
+          let newPositionX = position.x + this.direction * this.data.speed * timeDelta;
+          let newPositionZ = position.z;
+
+          // Verificar si la nueva posición está dentro de los límites
+          if (newPositionX > this.maxPositionX) {
+              newPositionX = this.maxPositionX;
+              this.direction = -1; // Cambiar dirección hacia la izquierda
+              newPositionZ = this.minPositionZ; // Mover hacia adelante
+          } else if (newPositionX < this.minPositionX) {
+              newPositionX = this.minPositionX;
+              this.direction = 1; // Cambiar dirección hacia la derecha
+              newPositionZ = this.maxPositionZ; // Mover hacia atrás
+          }
+
+          // Calcular nueva rotación
+          let newRotationX = rotation.x;
+          if (newPositionZ === this.maxPositionZ) {
+              newRotationX = this.rotationEnd;
+              this.rotationDirection = -1; // Cambiar dirección de rotación (decrementar)
+          } else if (newPositionZ === this.minPositionZ) {
+              newRotationX = this.rotationStart;
+              this.rotationDirection = 1; // Cambiar dirección de rotación (incrementar)
+          } else {
+              newRotationX += this.rotationDirection * 0.01; // Incrementar o decrementar rotación gradualmente
+          }
+
+          // Actualizar posición y rotación
+          el.setAttribute('position', { x: newPositionX, y: position.y, z: newPositionZ });
+          el.setAttribute('rotation', { x: newRotationX, y: rotation.y, z: rotation.z });
+      }
+  });
+
+  // Aplicar el componente personalizado al contenedor del dron
+  dronContainer.setAttribute('move-drone', { speed: 0.0025 });
+</script>
+
   
   
       </a-scene>

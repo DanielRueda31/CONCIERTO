@@ -339,7 +339,8 @@
     </script>
     </a-entity>
   
-  
+      <!----------------------CAMARAS Y DRONES ------------------>
+
    
     <!-- Cámara principal -->
     <a-entity id="mainCamera" camera="active: true" wasd-controls look-controls position="0 2 0" ></a-entity>
@@ -354,30 +355,58 @@
         <a-entity id="cameraDrone" camera="active: false" look-controls></a-entity>
     </a-entity>
 </a-entity>
+
+
+    <!------------ Cámaras fijas ----------->
+    <a-entity id="contedorfijaA" position="0 1 0" rotation="0 0 0">
+      <a-entity id="fija1">
+        <a-box width="0.5" height="0.2" depth="0.2" position="4.5 0.5 -4.8" rotation="0 30 0"material="color: black" shadow="cast: true"></a-box>
+      <!-- Trípode -->
+      <a-cylinder color="#CD7F32" height="0.5" radius="0.03"  position="4.5 0.25 -4.8"></a-cylinder>
+      <a-cylinder color="#CCCCCC" height="0.1" radius="0.05" position="4.3 0.5 -4.7" rotation="80 0 60"></a-cylinder>  
+        <!-- Añade la nueva cámara -->
+      <a-entity id="camerafijaA" camera="active: false" position="4.3 0.5 -4.7"   rotation="0 130 0"></a-entity>
+      </a-entity>
+      </a-entity>
+      
+
+
 <script>
-  // Obtener referencia a la cámara principal y la del dron
-  var mainCamera = document.getElementById('mainCamera');
+ // Obtener referencia a la cámara principal, la del dron y la cámara fija
+ var mainCamera = document.getElementById('mainCamera');
   var cameraDrone = document.getElementById('cameraDrone');
+  var cameraFija = document.getElementById('camerafijaA');
   var dronContainer = document.getElementById('dronContainer');
 
-  // Función para cambiar a la cámara del dron al presionar la tecla "c"
+  // Función para cambiar a la cámara del dron
   function activateDroneCamera() {
       mainCamera.setAttribute('camera', 'active', false);
       cameraDrone.setAttribute('camera', 'active', true);
+      cameraFija.setAttribute('camera', 'active', false); // Desactivar cámara fija
   }
 
-  // Función para regresar a la cámara principal al presionar la tecla "p"
+  // Función para cambiar a la cámara principal
   function activateMainCamera() {
       mainCamera.setAttribute('camera', 'active', true);
       cameraDrone.setAttribute('camera', 'active', false);
+      cameraFija.setAttribute('camera', 'active', false); // Desactivar cámara fija
   }
 
-  // Agregar un listener de evento para detectar cuando se presiona la tecla "c" o "p"
+  // Función para cambiar a la cámara fija
+  function activateFixedCamera() {
+      mainCamera.setAttribute('camera', 'active', false);
+      cameraDrone.setAttribute('camera', 'active', false);
+      cameraFija.setAttribute('camera', 'active', true);
+  }
+
+  // Agregar un listener de evento para detectar cuando se presiona la tecla correspondiente a cada cámara
   document.addEventListener('keydown', function(event) {
       if (event.key === 'c') {
           activateDroneCamera();
       } else if (event.key === 'p') {
           activateMainCamera();
+      } else if (event.key === 'x') {
+          activateFixedCamera();
       }
   });
 
@@ -438,7 +467,82 @@
   dronContainer.setAttribute('move-drone', { speed: 0.0025 });
 </script>
 
-  
+<script>
+ AFRAME.registerComponent('rotate-container', {
+    schema: {
+        duration: { type: 'number', default: 6000 },
+        initialRotation: { type: 'vec3', default: { x: 0, y: 0, z: 0 } },
+        finalRotation: { type: 'vec3', default: { x: 0, y: 85, z: 0 } }
+    },
+
+    init: function () {
+        this.rotation = this.data.initialRotation;
+        this.isRotatingForward = true;
+        this.rotateContainer();
+    },
+
+    rotateContainer: function () {
+        const el = this.el;
+        const rotationFrom = this.isRotatingForward ? this.data.initialRotation : this.data.finalRotation;
+        const rotationTo = this.isRotatingForward ? this.data.finalRotation : this.data.initialRotation;
+
+        el.setAttribute('animation', {
+            property: 'rotation',
+            dur: this.data.duration,
+            easing: 'linear',
+            from: `${rotationFrom.x} ${rotationFrom.y} ${rotationFrom.z}`,
+            to: `${rotationTo.x} ${rotationTo.y} ${rotationTo.z}`
+        });
+
+        el.addEventListener('animationcomplete', () => {
+            this.isRotatingForward = !this.isRotatingForward;
+            this.rotateContainer();
+        }, { once: true }); // Agregar el evento solo una vez
+    },
+
+    rotateForward: function () {
+        const el = this.el;
+        const initialRotation = this.data.initialRotation;
+        const finalRotation = this.data.finalRotation;
+
+        el.setAttribute('animation', {
+            property: 'rotation',
+            dur: this.data.duration,
+            easing: 'linear',
+            from: `${initialRotation.x} ${initialRotation.y} ${initialRotation.z}`,
+            to: `${finalRotation.x} ${finalRotation.y} ${finalRotation.z}`
+        });
+
+        el.addEventListener('animationcomplete', () => {
+            this.rotateBackward();
+        }, { once: true }); // Agregar el evento solo una vez
+    },
+
+    rotateBackward: function () {
+        const el = this.el;
+        const initialRotation = this.data.finalRotation;
+        const finalRotation = this.data.initialRotation;
+
+        el.setAttribute('animation', {
+            property: 'rotation',
+            dur: this.data.duration,
+            easing: 'linear',
+            from: `${initialRotation.x} ${initialRotation.y} ${initialRotation.z}`,
+            to: `${finalRotation.x} ${finalRotation.y} ${finalRotation.z}`
+        });
+
+        el.addEventListener('animationcomplete', () => {
+            this.rotateForward();
+        }, { once: true }); // Agregar el evento solo una vez
+    }
+});
+
+// Aplicar el componente personalizado al contenedor fijo A
+const contenedorFijoA = document.getElementById('contedorfijaA');
+contenedorFijoA.setAttribute('rotate-container', {});
+</script>
+
+
   
       </a-scene>
   </body>

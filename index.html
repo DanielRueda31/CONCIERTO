@@ -348,9 +348,8 @@
   <a-entity id="dronContainer" position="0 7 4" rotation="-20 0 0">
     <!-- DRON CON CAMARA -->
     <a-entity id="dron">
-        <a-box width="1" height="1" depth="0.5" position="0 7.5 4" material="color: black" shadow="cast: true"></a-box>
-        <a-box width="2.5" height="0.5" depth="0.1" position="0 7.5 4" material="color: black" shadow="cast: true"></a-box>
-
+      <a-entity gltf-model="url(modelos/dron5.glb)" scale="1 1 1" position="0 8 4" ></a-entity>
+       
         <!-- Añade la nueva cámara -->
         <a-entity id="cameraDrone" camera="active: false" position="0 7.2 4"  rotation="-60 0 0" ></a-entity>
     </a-entity>
@@ -405,12 +404,12 @@
           activateDroneCamera();
       } else if (event.key === 'p') {
           activateMainCamera();
-      } else if (event.key === 'x') {
+      } else if (event.key === 'z') {
           activateFixedCamera();
       }
   });
 
-  AFRAME.registerComponent('move-drone', {
+ AFRAME.registerComponent('move-drone', {
     schema: {
       speed: { type: 'number', default: 0.001 },
       maxPositionX: { type: 'number', default: 5 },
@@ -564,7 +563,7 @@
   // Agrega un event listener al documento para escuchar los eventos de teclado
   document.addEventListener('keydown', function(event) {
     // Verifica si la tecla presionada es "z"
-    if (event.key === 'z') {
+    if (event.key === 'x') {
       handleRotationKeyPress(event);
     }
   });

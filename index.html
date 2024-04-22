@@ -410,136 +410,113 @@
       }
   });
 
-  //  ANIMACION Y MOVIMIENTO DEL DRON 
   AFRAME.registerComponent('move-drone', {
-      schema: {
-          speed: { type: 'number', default: 0.001 }
-      },
-      init: function () {
-          this.direction = 1; // Comienza moviéndose hacia la derecha
-          this.maxPositionX = 5; // Límite derecho
-          this.minPositionX = -5; // Límite izquierdo
-          this.maxPositionZ = 9; // Límite hacia atrás
-          this.minPositionZ = 4; // Límite hacia adelante
-          this.rotationStart = -20; // Rotación inicial
-          this.rotationEnd = -60; // Rotación final
-          this.rotationDirection = 1; // Dirección de rotación inicial (incrementar)
-      },
-      tick: function (time, timeDelta) {
-          const el = this.el;
-          const position = el.getAttribute('position');
-          const rotation = el.getAttribute('rotation');
-
-          // Calcular nueva posición
-          let newPositionX = position.x + this.direction * this.data.speed * timeDelta;
-          let newPositionZ = position.z;
-
-          // Verificar si la nueva posición está dentro de los límites
-          if (newPositionX > this.maxPositionX) {
-              newPositionX = this.maxPositionX;
-              this.direction = -1; // Cambiar dirección hacia la izquierda
-              newPositionZ = this.minPositionZ; // Mover hacia adelante
-          } else if (newPositionX < this.minPositionX) {
-              newPositionX = this.minPositionX;
-              this.direction = 1; // Cambiar dirección hacia la derecha
-              newPositionZ = this.maxPositionZ; // Mover hacia atrás
-          }
-
-          // Calcular nueva rotación
-          let newRotationX = rotation.x;
-          if (newPositionZ === this.maxPositionZ) {
-              newRotationX = this.rotationEnd;
-              this.rotationDirection = -1; // Cambiar dirección de rotación (decrementar)
-          } else if (newPositionZ === this.minPositionZ) {
-              newRotationX = this.rotationStart;
-              this.rotationDirection = 1; // Cambiar dirección de rotación (incrementar)
-          } else {
-              newRotationX += this.rotationDirection * 0.01; // Incrementar o decrementar rotación gradualmente
-          }
-
-          // Actualizar posición y rotación
-          el.setAttribute('position', { x: newPositionX, y: position.y, z: newPositionZ });
-          el.setAttribute('rotation', { x: newRotationX, y: rotation.y, z: rotation.z });
-      }
-  });
-
-  // Aplicar el componente personalizado al contenedor del dron
-  dronContainer.setAttribute('move-drone', { speed: 0.0025 });
-</script>
-
-<script>
- AFRAME.registerComponent('rotate-container', {
     schema: {
-        duration: { type: 'number', default: 6000 },
-        initialRotation: { type: 'vec3', default: { x: 0, y: 0, z: 0 } },
-        finalRotation: { type: 'vec3', default: { x: 0, y: 85, z: 0 } }
+        speed: { type: 'number', default: 0.001 },
+        maxPositionX: { type: 'number', default: 5 },
+        minPositionX: { type: 'number', default: -5 },
+        maxPositionZ: { type: 'number', default: 9 },
+        minPositionZ: { type: 'number', default: 4 },
+        rotationStart: { type: 'number', default: -20 },
+        rotationEnd: { type: 'number', default: -60 }
     },
 
     init: function () {
-        this.rotation = this.data.initialRotation;
-        this.isRotatingForward = true;
-        this.rotateContainer();
+        this.direction = 1;
+        this.rotationDirection = 1;
     },
 
-    rotateContainer: function () {
+    tick: function (time, timeDelta) {
         const el = this.el;
-        const rotationFrom = this.isRotatingForward ? this.data.initialRotation : this.data.finalRotation;
-        const rotationTo = this.isRotatingForward ? this.data.finalRotation : this.data.initialRotation;
+        const position = el.getAttribute('position');
+        const rotation = el.getAttribute('rotation');
+        const data = this.data;
 
-        el.setAttribute('animation', {
-            property: 'rotation',
-            dur: this.data.duration,
-            easing: 'linear',
-            from: `${rotationFrom.x} ${rotationFrom.y} ${rotationFrom.z}`,
-            to: `${rotationTo.x} ${rotationTo.y} ${rotationTo.z}`
-        });
+        // Calcular nueva posición
+        let newPositionX = position.x + this.direction * data.speed * timeDelta;
+        let newPositionZ = position.z;
 
-        el.addEventListener('animationcomplete', () => {
-            this.isRotatingForward = !this.isRotatingForward;
-            this.rotateContainer();
-        }, { once: true }); // Agregar el evento solo una vez
-    },
+        // Verificar si la nueva posición está dentro de los límites
+        if (newPositionX > data.maxPositionX) {
+            newPositionX = data.maxPositionX;
+            this.direction = -1;
+            newPositionZ = data.minPositionZ;
+        } else if (newPositionX < data.minPositionX) {
+            newPositionX = data.minPositionX;
+            this.direction = 1;
+            newPositionZ = data.maxPositionZ;
+        }
 
-    rotateForward: function () {
-        const el = this.el;
-        const initialRotation = this.data.initialRotation;
-        const finalRotation = this.data.finalRotation;
+        // Calcular nueva rotación
+        let newRotationX = rotation.x;
+        if (newPositionZ === data.maxPositionZ) {
+            newRotationX = data.rotationEnd;
+            this.rotationDirection = -1;
+        } else if (newPositionZ === data.minPositionZ) {
+            newRotationX = data.rotationStart;
+            this.rotationDirection = 1;
+        } else {
+            newRotationX += this.rotationDirection * 0.01;
+        }
 
-        el.setAttribute('animation', {
-            property: 'rotation',
-            dur: this.data.duration,
-            easing: 'linear',
-            from: `${initialRotation.x} ${initialRotation.y} ${initialRotation.z}`,
-            to: `${finalRotation.x} ${finalRotation.y} ${finalRotation.z}`
-        });
-
-        el.addEventListener('animationcomplete', () => {
-            this.rotateBackward();
-        }, { once: true }); // Agregar el evento solo una vez
-    },
-
-    rotateBackward: function () {
-        const el = this.el;
-        const initialRotation = this.data.finalRotation;
-        const finalRotation = this.data.initialRotation;
-
-        el.setAttribute('animation', {
-            property: 'rotation',
-            dur: this.data.duration,
-            easing: 'linear',
-            from: `${initialRotation.x} ${initialRotation.y} ${initialRotation.z}`,
-            to: `${finalRotation.x} ${finalRotation.y} ${finalRotation.z}`
-        });
-
-        el.addEventListener('animationcomplete', () => {
-            this.rotateForward();
-        }, { once: true }); // Agregar el evento solo una vez
+        // Actualizar posición y rotación
+        el.setAttribute('position', { x: newPositionX, y: position.y, z: newPositionZ });
+        el.setAttribute('rotation', { x: newRotationX, y: rotation.y, z: rotation.z });
     }
 });
 
-// Aplicar el componente personalizado al contenedor fijo A
-const contenedorFijoA = document.getElementById('contedorfijaA');
-contenedorFijoA.setAttribute('rotate-container', {});
+// Aplicar el componente personalizado al contenedor del dron
+dronContainer.setAttribute('move-drone', {
+    speed: 0.0025,
+    maxPositionX: 5,
+    minPositionX: -5,
+    maxPositionZ: 9,
+    minPositionZ: 4,
+    rotationStart: -20,
+    rotationEnd: -60
+});
+</script>
+
+<script>
+  AFRAME.registerComponent('rotate-container', {
+    init: function () {
+      this.rotateForward();
+    },
+    rotateForward: function () {
+      const el = this.el;
+      const initialRotation = el.getAttribute('rotation');
+      const finalRotation = { x: 0, y: 85, z: 0 };
+      el.setAttribute('animation', {
+        property: 'rotation',
+        dur: 6000, // Duración de la animación en milisegundos
+        easing: 'linear', // Tipo de interpolación
+        from: `${initialRotation.x} ${initialRotation.y} ${initialRotation.z}`,
+        to: `${finalRotation.x} ${finalRotation.y} ${finalRotation.z}`
+      });
+      el.addEventListener('animationcomplete', () => {
+        this.rotateBackward();
+      });
+    },
+    rotateBackward: function () {
+      const el = this.el;
+      const initialRotation = { x: 0, y: 85, z: 0 };
+      const finalRotation = { x: 0, y: 0, z: 0 };
+      el.setAttribute('animation', {
+        property: 'rotation',
+        dur: 6000, // Duración de la animación en milisegundos
+        easing: 'linear', // Tipo de interpolación
+        from: `${initialRotation.x} ${initialRotation.y} ${initialRotation.z}`,
+        to: `${finalRotation.x} ${finalRotation.y} ${finalRotation.z}`
+      });
+      el.addEventListener('animationcomplete', () => {
+        this.rotateForward();
+      });
+    }
+  });
+
+  // Aplicar el componente personalizado al contenedor fijo A
+  const contenedorFijoA = document.getElementById('contedorfijaA');
+  contenedorFijoA.setAttribute('rotate-container', {});
 </script>
 
 

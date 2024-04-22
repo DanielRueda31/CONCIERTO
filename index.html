@@ -359,15 +359,24 @@
     <!------------ Cámaras fijas ----------->
     <a-entity id="contedorfijaA" position="0 1 0" rotation="0 0 0">
       <a-entity id="fija1">
-        <a-box width="0.5" height="0.2" depth="0.2" position="4.5 0.5 -4.8" rotation="0 30 0"material="color: black" shadow="cast: true"></a-box>
+        <a-entity gltf-model="url(modelos/CAMARASINBASE.glb)" scale="10 10 10" position="4.5 0.5 -4.8" rotation="0 -60 0"></a-entity>
       <!-- Trípode -->
-      <a-cylinder color="#CD7F32" height="0.5" radius="0.03"  position="4.5 0.25 -4.8"></a-cylinder>
-      <a-cylinder color="#CCCCCC" height="0.1" radius="0.05" position="4.3 0.5 -4.7" rotation="80 0 60"></a-cylinder>  
+      <a-cylinder color="#CCCCCC" height="0.5" radius="0.03"  position="4.5 0.25 -4.8"></a-cylinder>
         <!-- Añade la nueva cámara -->
       <a-entity id="camerafijaA" camera="active: false" position="4.3 0.5 -4.7"   rotation="0 130 0"></a-entity>
       </a-entity>
       </a-entity>
       
+    <!------------ Cámaras Pared ----------->
+    <a-entity id="contedorCamaraPared" position="0 1 0" rotation="0 0 0">
+      <a-entity id="fija2">
+        <a-entity gltf-model="url(modelos/CAMARASINBASE.glb)" scale="10 10 10" position="-14 1 5" rotation="0 90 0"></a-entity>
+
+        <!-- Añade la nueva cámara -->
+      <a-entity id="camerafijaB" camera="active: false" position="-13.6 1 5"   rotation="0 -90 0"></a-entity>
+      </a-entity>
+      </a-entity>
+
 
 
 <script>
@@ -375,6 +384,7 @@
  var mainCamera = document.getElementById('mainCamera');
   var cameraDrone = document.getElementById('cameraDrone');
   var cameraFija = document.getElementById('camerafijaA');
+  var cameraFijab = document.getElementById('camerafijaB');
   var dronContainer = document.getElementById('dronContainer');
 
   // Función para cambiar a la cámara del dron
@@ -382,6 +392,8 @@
       mainCamera.setAttribute('camera', 'active', false);
       cameraDrone.setAttribute('camera', 'active', true);
       cameraFija.setAttribute('camera', 'active', false); // Desactivar cámara fija
+      cameraFijab.setAttribute('camera', 'active', false); // Desactivar cámara fija
+
   }
 
   // Función para cambiar a la cámara principal
@@ -389,6 +401,7 @@
       mainCamera.setAttribute('camera', 'active', true);
       cameraDrone.setAttribute('camera', 'active', false);
       cameraFija.setAttribute('camera', 'active', false); // Desactivar cámara fija
+      cameraFijab.setAttribute('camera', 'active', false);
   }
 
   // Función para cambiar a la cámara fija
@@ -396,7 +409,17 @@
       mainCamera.setAttribute('camera', 'active', false);
       cameraDrone.setAttribute('camera', 'active', false);
       cameraFija.setAttribute('camera', 'active', true);
+      cameraFijab.setAttribute('camera', 'active', true);
   }
+
+    // Función para cambiar a la cámara fija
+    function activateFixedCamerab() {
+      mainCamera.setAttribute('camera', 'active', false);
+      cameraDrone.setAttribute('camera', 'active', false);
+      cameraFija.setAttribute('camera', 'active', true);
+      cameraFijab.setAttribute('camera', 'active', true);
+  }
+
 
   // Agregar un listener de evento para detectar cuando se presiona la tecla correspondiente a cada cámara
   document.addEventListener('keydown', function(event) {
@@ -406,6 +429,8 @@
           activateMainCamera();
       } else if (event.key === 'z') {
           activateFixedCamera();
+      } else if (event.key === 'b') {
+          activateFixedCamerab();
       }
   });
 
@@ -567,6 +592,58 @@
       handleRotationKeyPress(event);
     }
   });
+</script>
+<script>
+  AFRAME.registerComponent('slide-animation', {
+    init: function () {
+      this.direction = 1; // Dirección inicial del deslizamiento
+      this.distance = 5; // Distancia total de deslizamiento
+      this.speed = 0.005; // Velocidad de deslizamiento (más lenta que antes)
+      this.currentDistance = 0; // Distancia actual recorrida
+      this.isSliding = false; // Bandera para rastrear si la animación está en curso
+    },
+
+    tick: function (time, timeDelta) {
+      if (!this.isSliding) return; // Salir si la animación no está en curso
+
+      const el = this.el;
+      const position = el.getAttribute('position');
+
+      // Actualizar la posición en el eje Z según la dirección y la velocidad
+      position.z += this.direction * this.speed * timeDelta;
+
+      // Verificar si se alcanzó la distancia máxima o mínima
+      if (Math.abs(position.z) >= this.distance) {
+        // Ajustar la posición para que no se salga de los límites
+        position.z = this.direction === 1 ? this.distance : -this.distance;
+        // Cambiar la dirección
+        this.direction *= -1;
+      }
+
+      // Actualizar la posición del elemento
+      el.setAttribute('position', position);
+    },
+
+    toggleSlide: function () {
+      // Cambiar el estado de la animación
+      this.isSliding = !this.isSliding;
+    }
+  });
+
+  // Función para iniciar o detener el deslizamiento del contenedor cuando se presiona la tecla "n"
+  function handleContainerSlideKeyPress(event) {
+    // Verifica si la tecla presionada es "n"
+    if (event.key === 'n') {
+      // Aplica el componente personalizado al contenedor de la cámara
+      const contenedorCamaraPared = document.getElementById('contedorCamaraPared');
+      // Llama a la función toggleSlide del componente slide-animation
+      contenedorCamaraPared.setAttribute('slide-animation', '');
+      contenedorCamaraPared.components['slide-animation'].toggleSlide();
+    }
+  }
+
+  // Agrega un event listener al documento para escuchar los eventos de teclado
+  document.addEventListener('keydown', handleContainerSlideKeyPress);
 </script>
 
 

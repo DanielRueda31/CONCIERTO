@@ -345,14 +345,14 @@
     <!-- Cámara principal -->
     <a-entity id="mainCamera" camera="active: true" wasd-controls look-controls position="0 2 0" ></a-entity>
   <!-- Contenedor para el dron -->
-  <a-entity id="dronContainer" position="0 5 4" rotation="-20 0 0">
+  <a-entity id="dronContainer" position="0 7 4" rotation="-20 0 0">
     <!-- DRON CON CAMARA -->
     <a-entity id="dron">
-        <a-box width="1" height="1" depth="0.5" position="0 5.5 4" material="color: black" shadow="cast: true"></a-box>
-        <a-box width="2.5" height="0.5" depth="0.1" position="0 5.5 4" material="color: black" shadow="cast: true"></a-box>
+        <a-box width="1" height="1" depth="0.5" position="0 7.5 4" material="color: black" shadow="cast: true"></a-box>
+        <a-box width="2.5" height="0.5" depth="0.1" position="0 7.5 4" material="color: black" shadow="cast: true"></a-box>
 
         <!-- Añade la nueva cámara -->
-        <a-entity id="cameraDrone" camera="active: false" look-controls></a-entity>
+        <a-entity id="cameraDrone" camera="active: false" position="0 7.2 4"  rotation="-60 0 0" ></a-entity>
     </a-entity>
 </a-entity>
 
@@ -424,28 +424,31 @@
     init: function () {
         this.direction = 1;
         this.rotationDirection = 1;
+        this.angle = 0; // Ángulo inicial
     },
 
     tick: function (time, timeDelta) {
         const el = this.el;
-        const position = el.getAttribute('position');
         const rotation = el.getAttribute('rotation');
         const data = this.data;
 
-        // Calcular nueva posición
-        let newPositionX = position.x + this.direction * data.speed * timeDelta;
-        let newPositionZ = position.z;
+        // Calcular nuevo ángulo
+        this.angle += this.direction * data.speed * timeDelta;
 
-        // Verificar si la nueva posición está dentro de los límites
+        // Calcular nueva posición X
+        let newPositionX = data.maxPositionX * Math.cos(this.angle);
+
+        // Verificar si la nueva posición X está dentro de los límites
         if (newPositionX > data.maxPositionX) {
             newPositionX = data.maxPositionX;
-            this.direction = -1;
-            newPositionZ = data.minPositionZ;
+            this.direction = -1; // Cambiar dirección
         } else if (newPositionX < data.minPositionX) {
             newPositionX = data.minPositionX;
-            this.direction = 1;
-            newPositionZ = data.maxPositionZ;
+            this.direction = 1; // Cambiar dirección
         }
+
+        // Calcular nueva posición Z
+        let newPositionZ = data.minPositionZ + (data.maxPositionZ - data.minPositionZ) * Math.sin(this.angle);
 
         // Calcular nueva rotación
         let newRotationX = rotation.x;
@@ -460,14 +463,22 @@
         }
 
         // Actualizar posición y rotación
-        el.setAttribute('position', { x: newPositionX, y: position.y, z: newPositionZ });
-        el.setAttribute('rotation', { x: newRotationX, y: rotation.y, z: rotation.z });
+        el.setAttribute('position', {
+            x: newPositionX,
+            y: rotation.y,
+            z: newPositionZ
+        });
+        el.setAttribute('rotation', {
+            x: newRotationX,
+            y: rotation.y,
+            z: rotation.z
+        });
     }
 });
 
 // Aplicar el componente personalizado al contenedor del dron
 dronContainer.setAttribute('move-drone', {
-    speed: 0.0025,
+    speed: 0.0010,
     maxPositionX: 5,
     minPositionX: -5,
     maxPositionZ: 9,

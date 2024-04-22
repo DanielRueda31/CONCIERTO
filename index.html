@@ -412,86 +412,98 @@
 
   AFRAME.registerComponent('move-drone', {
     schema: {
-        speed: { type: 'number', default: 0.001 },
-        maxPositionX: { type: 'number', default: 5 },
-        minPositionX: { type: 'number', default: -5 },
-        maxPositionZ: { type: 'number', default: 9 },
-        minPositionZ: { type: 'number', default: 4 },
-        rotationStart: { type: 'number', default: -20 },
-        rotationEnd: { type: 'number', default: -60 }
+      speed: { type: 'number', default: 0.001 },
+      maxPositionX: { type: 'number', default: 5 },
+      minPositionX: { type: 'number', default: -5 },
+      maxPositionZ: { type: 'number', default: 9 },
+      minPositionZ: { type: 'number', default: 4 },
+      rotationStart: { type: 'number', default: -20 },
+      rotationEnd: { type: 'number', default: -60 }
     },
 
     init: function () {
-        this.direction = 1;
-        this.rotationDirection = 1;
-        this.angle = 0; // Ángulo inicial
+      this.direction = 1;
+      this.rotationDirection = 1;
+      this.angle = 0; // Ángulo inicial
+      this.moving = false; // Bandera para rastrear si el dron está en movimiento
     },
 
     tick: function (time, timeDelta) {
-        const el = this.el;
-        const rotation = el.getAttribute('rotation');
-        const data = this.data;
+      if (!this.moving) return; // Salir si el dron no está en movimiento
 
-        // Calcular nuevo ángulo
-        this.angle += this.direction * data.speed * timeDelta;
+      const el = this.el;
+      const rotation = el.getAttribute('rotation');
+      const data = this.data;
 
-        // Calcular nueva posición X
-        let newPositionX = data.maxPositionX * Math.cos(this.angle);
+      // Calcular nuevo ángulo
+      this.angle += this.direction * data.speed * timeDelta;
 
-        // Verificar si la nueva posición X está dentro de los límites
-        if (newPositionX > data.maxPositionX) {
-            newPositionX = data.maxPositionX;
-            this.direction = -1; // Cambiar dirección
-        } else if (newPositionX < data.minPositionX) {
-            newPositionX = data.minPositionX;
-            this.direction = 1; // Cambiar dirección
-        }
+      // Calcular nueva posición X
+      let newPositionX = data.maxPositionX * Math.cos(this.angle);
 
-        // Calcular nueva posición Z
-        let newPositionZ = data.minPositionZ + (data.maxPositionZ - data.minPositionZ) * Math.sin(this.angle);
+      // Verificar si la nueva posición X está dentro de los límites
+      if (newPositionX > data.maxPositionX) {
+        newPositionX = data.maxPositionX;
+        this.direction = -1; // Cambiar dirección
+      } else if (newPositionX < data.minPositionX) {
+        newPositionX = data.minPositionX;
+        this.direction = 1; // Cambiar dirección
+      }
 
-        // Calcular nueva rotación
-        let newRotationX = rotation.x;
-        if (newPositionZ === data.maxPositionZ) {
-            newRotationX = data.rotationEnd;
-            this.rotationDirection = -1;
-        } else if (newPositionZ === data.minPositionZ) {
-            newRotationX = data.rotationStart;
-            this.rotationDirection = 1;
-        } else {
-            newRotationX += this.rotationDirection * 0.01;
-        }
+      // Calcular nueva posición Z
+      let newPositionZ = data.minPositionZ + (data.maxPositionZ - data.minPositionZ) * Math.sin(this.angle);
 
-        // Actualizar posición y rotación
-        el.setAttribute('position', {
-            x: newPositionX,
-            y: rotation.y,
-            z: newPositionZ
-        });
-        el.setAttribute('rotation', {
-            x: newRotationX,
-            y: rotation.y,
-            z: rotation.z
-        });
+      // Calcular nueva rotación
+      let newRotationX = rotation.x;
+      if (newPositionZ === data.maxPositionZ) {
+        newRotationX = data.rotationEnd;
+        this.rotationDirection = -1;
+      } else if (newPositionZ === data.minPositionZ) {
+        newRotationX = data.rotationStart;
+        this.rotationDirection = 1;
+      } else {
+        newRotationX += this.rotationDirection * 0.01;
+      }
+
+      // Actualizar posición y rotación
+      el.setAttribute('position', {
+        x: newPositionX,
+        y: rotation.y,
+        z: newPositionZ
+      });
+      el.setAttribute('rotation', {
+        x: newRotationX,
+        y: rotation.y,
+        z: rotation.z
+      });
+    },
+
+    toggleMovement: function () {
+      // Cambia el estado de movimiento del dron
+      this.moving = !this.moving;
     }
-});
+  });
 
-// Aplicar el componente personalizado al contenedor del dron
-dronContainer.setAttribute('move-drone', {
-    speed: 0.0010,
-    maxPositionX: 5,
-    minPositionX: -5,
-    maxPositionZ: 9,
-    minPositionZ: 4,
-    rotationStart: -20,
-    rotationEnd: -60
-});
+  // Función para iniciar o detener el movimiento del dron cuando se presiona la tecla "v"
+  function handleDroneMovementKeyPress(event) {
+    // Verifica si la tecla presionada es "v"
+    if (event.key === 'v') {
+      // Aplica el componente personalizado al contenedor del dron
+      const dronContainer = document.getElementById('dronContainer');
+      // Llama a la función toggleMovement del componente move-drone
+      dronContainer.setAttribute('move-drone', '');
+      dronContainer.components['move-drone'].toggleMovement();
+    }
+  }
+
+  // Agrega un event listener al documento para escuchar los eventos de teclado
+  document.addEventListener('keydown', handleDroneMovementKeyPress);
 </script>
-
 <script>
   AFRAME.registerComponent('rotate-container', {
     init: function () {
-      this.rotateForward();
+      // Inicializa el componente pero no inicia la rotación automáticamente
+      this.animating = false; // Agrega una bandera para rastrear el estado de la animación
     },
     rotateForward: function () {
       const el = this.el;
@@ -507,6 +519,7 @@ dronContainer.setAttribute('move-drone', {
       el.addEventListener('animationcomplete', () => {
         this.rotateBackward();
       });
+      this.animating = true; // Establece la bandera de animación en true cuando la animación está en progreso
     },
     rotateBackward: function () {
       const el = this.el;
@@ -522,12 +535,39 @@ dronContainer.setAttribute('move-drone', {
       el.addEventListener('animationcomplete', () => {
         this.rotateForward();
       });
+      this.animating = true; // Establece la bandera de animación en true cuando la animación está en progreso
+    },
+    toggleRotation: function () {
+      // Si la animación está en curso, detén la animación; de lo contrario, inicia la animación
+      if (this.animating) {
+        this.stopRotation();
+      } else {
+        this.rotateForward();
+      }
+    },
+    stopRotation: function () {
+      const el = this.el;
+      el.removeAttribute('animation'); // Detiene la animación eliminando el atributo 'animation'
+      this.animating = false; // Establece la bandera de animación en false cuando la animación se detiene
     }
   });
 
-  // Aplicar el componente personalizado al contenedor fijo A
-  const contenedorFijoA = document.getElementById('contedorfijaA');
-  contenedorFijoA.setAttribute('rotate-container', {});
+  // Función para iniciar o detener la rotación cuando se presiona la tecla "z"
+  function handleRotationKeyPress(event) {
+    // Aplica el componente personalizado al contenedor fijo A
+    const contenedorFijoA = document.getElementById('contedorfijaA');
+    contenedorFijoA.setAttribute('rotate-container', '');
+    // Llama a la función toggleRotation del componente rotate-container
+    contenedorFijoA.components['rotate-container'].toggleRotation();
+  }
+
+  // Agrega un event listener al documento para escuchar los eventos de teclado
+  document.addEventListener('keydown', function(event) {
+    // Verifica si la tecla presionada es "z"
+    if (event.key === 'z') {
+      handleRotationKeyPress(event);
+    }
+  });
 </script>
 
 

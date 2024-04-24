@@ -404,21 +404,21 @@
       cameraFijab.setAttribute('camera', 'active', false);
   }
 
-  // Función para cambiar a la cámara fija
-  function activateFixedCamera() {
-      mainCamera.setAttribute('camera', 'active', false);
-      cameraDrone.setAttribute('camera', 'active', false);
-      cameraFija.setAttribute('camera', 'active', true);
-      cameraFijab.setAttribute('camera', 'active', true);
-  }
+// Función para cambiar a la cámara fija A
+function activateFixedCamera() {
+    mainCamera.setAttribute('camera', 'active', false);
+    cameraDrone.setAttribute('camera', 'active', false);
+    cameraFija.setAttribute('camera', 'active', true); // Activar cámara fija A
+    cameraFijab.setAttribute('camera', 'active', false);
+}
 
-    // Función para cambiar a la cámara fija
-    function activateFixedCamerab() {
-      mainCamera.setAttribute('camera', 'active', false);
-      cameraDrone.setAttribute('camera', 'active', false);
-      cameraFija.setAttribute('camera', 'active', true);
-      cameraFijab.setAttribute('camera', 'active', true);
-  }
+// Función para cambiar a la cámara fija B
+function activateFixedCamerab() {
+    mainCamera.setAttribute('camera', 'active', false);
+    cameraDrone.setAttribute('camera', 'active', false);
+    cameraFija.setAttribute('camera', 'active', false);
+    cameraFijab.setAttribute('camera', 'active', true); // Activar cámara fija B
+}
 
 
   // Agregar un listener de evento para detectar cuando se presiona la tecla correspondiente a cada cámara
@@ -429,7 +429,7 @@
           activateMainCamera();
       } else if (event.key === 'z') {
           activateFixedCamera();
-      } else if (event.key === 'b') {
+      } else if (event.key === 'b'  ) {
           activateFixedCamerab();
       }
   });
@@ -646,6 +646,8 @@
   document.addEventListener('keydown', handleContainerSlideKeyPress);
 </script>
 
+<a-entity gltf-model="url(modelos/gradas.glb)" scale="0.030 0.030 0.030" position="13.1 0 2" rotation="0 -90 0"></a-entity>
+<a-entity gltf-model="url(modelos/gradas.glb)" scale="0.030 0.030 0.030" position="13.1 0 8" rotation="0 -90 0"></a-entity>
 
   
       </a-scene>

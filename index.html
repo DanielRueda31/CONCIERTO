@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Concierto</title>
     <script src="aframe.min.js"></script>
-   
+    <script src="js/orbitas.js"></script>
+
 </head>
 <body>
     
@@ -16,7 +17,8 @@
       <!-- Añadir un cielo estrellado -->
       <a-sky src="#skyTexture"></a-sky>
       <a-assets>
-      <img id="skyTexture" src="imagenes/cielo.jpg">
+      <img id="skyTexture" src="imagenes/cielo2.jpg">
+
       </a-assets>    
 
           <!------------------LUGAR DONDE ESTA EL CONCIERTO------------------->
@@ -672,11 +674,64 @@
 
 <a-entity gltf-model="url(modelos/gradas.glb)" scale="0.030 0.030 0.030" position="13.1 0 2" rotation="0 -90 0"></a-entity>
 <a-entity gltf-model="url(modelos/gradas.glb)" scale="0.030 0.030 0.030" position="13.1 0 8" rotation="0 -90 0"></a-entity>
-
-
 <a-entity gltf-model="url(modelos/dj.glb)" scale="0.5 0.5 0.5" position="-1.5 0.5 -5.3" rotation="0 180 0"></a-entity>
 
 
+<a-entity class="orbit" position="0 3 0" rotation="0 0 0"
+            animation="property: rotation; to: 0 360 360; loop: true; dur: 40000;  easing: linear">
+        </a-entity>
+
+        <a-entity class="orbit" position="0 0 0" rotation="0 0 -45"
+            animation="property: rotation; to: 0 -360 0; loop: true; dur: 30000; easing: linear">
+        </a-entity>
+
+        <a-entity class="orbit" position="0 -3 0" rotation="0 0 -90"
+            animation="property: rotation; to: 0 360 360; loop: true; dur: 20000; easing: linear">
+        </a-entity>
+
+        <a-entity class="orbit" position="0 0 0" rotation="0 0 -120"
+            animation="property: rotation; to: 360 -360 0; loop: true; dur: 50000; easing: linear">
+        </a-entity>
+
+
+
+  <script>
+    window.addEventListener('load', initScene)
+
+const meteors = [
+    { x: 0, y: 0, z: -30 },
+    { x: 0, y: 0, z: 30 },
+    { x: 30, y: 0, z: 0 },
+    { x: -30, y: 0, z: 0 },
+    { x: 20, y: 0, z: 20 },
+    { x: 20, y: 0, z: -20 },
+    { x: -20, y: 0, z: -20 },
+    { x: -20, y: 0, z: 20 }
+]
+
+let meteor, score = 0
+
+function initScene() {
+
+    let orbits = document.querySelectorAll('.orbit')
+
+    orbits.forEach(orbit => {
+
+        meteors.forEach(pos => {
+
+            meteor = document.createElement('a-entity')
+            meteor.setAttribute('geometry', { primitive: 'sphere', radius: Math.random() * 3 + 0.5 })
+            meteor.setAttribute('material', { shader: 'flat', src: 'imagenes/mundo.png' })
+            meteor.setAttribute('class', 'meteor')
+            meteor.object3D.position.set(pos.x, pos.y, pos.z)
+
+
+            orbit.appendChild(meteor)
+        })
+    })
+}
+
+  </script>      
       </a-scene>
   </body>
   </html>

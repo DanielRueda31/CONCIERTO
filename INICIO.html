@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="aframe.min.js"></script>
+    <link rel="stylesheet" href="styles/pagina.css">
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        var video = document.getElementById('video');
+        video.addEventListener('ended', function() {
+          window.location.href = 'index.html';
+        });
+      });
+
+      function pauseVideo() {
+        document.querySelector('#video').pause();
+      }
+
+      function playVideo() {
+        document.querySelector('#video').play();
+      }
+
+      function restartVideo() {
+        var video = document.querySelector('#video');
+        video.currentTime = 0;
+        video.play();
+      }
+    </script>
+  </head>
+  <body>
+    <div id="button-container">
+      <button id="pause-button" onclick="pauseVideo()">Pausar</button>
+      <button id="play-button" onclick="playVideo()">Reproducir</button>
+      <button id="restart-button" onclick="restartVideo()">Reiniciar</button>
+    </div>
+
+    <a-scene>
+      <a-assets>
+        <video id="video" src="imagenes/antesdeameri.mp4"></video>
+      </a-assets>
+      
+      <!-- Video en un plano -->
+      <a-plane 
+        width="20" 
+        height="10" 
+        material="src: #video" 
+        rotation="0 0 0" 
+        position="0 2.5 -9.5">
+      </a-plane>
+
+      <a-entity camera wasd-controls look-controls></a-entity>
+    </a-scene>
+  </body>
+</html>

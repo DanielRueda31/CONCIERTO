@@ -5,12 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Concierto</title>
     <script src="aframe.min.js"></script>
-    <script src="js/orbitas.js"></script>
-
+    <link rel="stylesheet" href="styles/pagina.css">
 </head>
 <body>
     
     <a-scene>
+      <div id="controles">
+        <p>Lista de controles:
+          <br>Presionar Z para la cámara escenario.
+          <br>Presionar X para iniciar recorrido.
+          <br>Presionar C para la cámara dron.
+          <br>Presionar V para iniciar recorrido.
+          <br>Presionar B para la cámara de pared.
+          <br>Presionar N para iniciar recorrido.
+          <br>Presionar M para la cámara detrás del escenario.
+        </p>
+      </div>
+  
       
       <!-- EXTERIORES -->
 
@@ -24,16 +35,6 @@
           <!------------------LUGAR DONDE ESTA EL CONCIERTO------------------->
    <!-- SUELO -->
    <a-plane width="30" height="30" color="#556B2F" rotation="-90 0 0" position="0 0 0"></a-plane>
-   <!-- PAREDES -->
-   <a-box width="30" height="6" depth="0.5" position="0 3 -15" material="color: #654321" rotation="0 0 0" shadow="cast: true"></a-box>
-   <a-box width="30" height="6" depth="0.5" position="14.75 3 0" material="color: #654321" rotation="0 90 0" shadow="cast: true"></a-box>
-   <a-box width="30" height="6" depth="0.5" position="-14.75 3 0" material="color: #654321" rotation="0 90 0" shadow="cast: true"></a-box>        
-   <!-- techo -->
-   <a-entity geometry="primitive: cylinder; radius: 15; height: 30.2; thetaLength: 180; openEnded: true;" position="0 6 -0.1" rotation="0 90 90" material="color: #D3D3D3; side: double; opacity: 0.5 transparent: true;"></a-entity>
-   <a-entity geometry="primitive: cylinder; radius: 15; height: 0.5; thetaLength: 180; " position="0 6 -15" rotation="0 90 90" material="color: #D3D3D3; side: double; opacity: 0.5 transparent: true;"></a-entity>        
-   <!-- enrejado -->
-   <a-entity geometry="primitive: cylinder; radius: 2; height: 29; thetaLength: 30; openEnded: true;" position="0 0.1 -3.5" rotation="0 0 90" material="color: #D3D3D3;  opacity: 0.25 side: double; wireframe: true;"></a-entity>
-
 
     <!------------------ESCENARIO------------------->
 
@@ -674,6 +675,8 @@
 
 <a-entity gltf-model="url(modelos/gradas.glb)" scale="0.030 0.030 0.030" position="13.1 0 2" rotation="0 -90 0"></a-entity>
 <a-entity gltf-model="url(modelos/gradas.glb)" scale="0.030 0.030 0.030" position="13.1 0 8" rotation="0 -90 0"></a-entity>
+<a-entity gltf-model="url(modelos/gradas.glb)" scale="0.030 0.030 0.030" position="-13.1 0 8" rotation="0 90 0"></a-entity>
+<a-entity gltf-model="url(modelos/gradas.glb)" scale="0.030 0.030 0.030" position="-13.1 0 2" rotation="0 90 0"></a-entity>
 <a-entity gltf-model="url(modelos/dj.glb)" scale="0.5 0.5 0.5" position="-1.5 0.5 -5.3" rotation="0 180 0"></a-entity>
 
 

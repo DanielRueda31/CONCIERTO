@@ -35,20 +35,26 @@
     </div>
 
     <a-scene>
-      <a-assets>
+        <a-sky src="#skyTexture"></a-sky>
+              <a-assets>
         <video id="video" src="imagenes/antesdeameri.mp4"></video>
+        <img id="skyTexture" src="imagenes/cielo2.jpg">
       </a-assets>
       
       <!-- Video en un plano -->
       <a-plane 
-        width="20" 
-        height="10" 
+        width="30" 
+        height="20" 
         material="src: #video" 
         rotation="0 0 0" 
-        position="0 2.5 -9.5">
+        position="0 5 -9.5">
       </a-plane>
 
-      <a-entity camera wasd-controls look-controls></a-entity>
+      <a-plane width="30" height="30" color="#556B2F" rotation="-90 0 0" position="0 0 0"></a-plane>
+
+      <a-entity camera wasd-controls look-controls position="0 2 9"></a-entity>
+
+    </a-entity>
     </a-scene>
   </body>
 </html>

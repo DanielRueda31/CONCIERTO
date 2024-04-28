@@ -27,3 +27,15 @@
     background-color: #e74c3c;
     color: white;
   }
+
+  #controles {
+    position: absolute;
+    top: 560px;
+    left: 0px;
+    background-color: rgba(255, 255, 255, 0.1); /* Ajusta la opacidad aquí */
+    padding: 2px;
+    border-radius: 5px;
+    font-family: Arial, sans-serif;
+    z-index: 9999; /* asegura que esté sobre la escena */
+    font-size: 12px; 
+  }

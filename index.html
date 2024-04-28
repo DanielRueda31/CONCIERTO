@@ -12,6 +12,7 @@
     <a-scene>
       <div id="controles">
         <p>Lista de controles:
+          <br>Presionar p para la cámara pincipal.
           <br>Presionar Z para la cámara escenario.
           <br>Presionar X para iniciar recorrido.
           <br>Presionar C para la cámara dron.
@@ -724,7 +725,7 @@ function initScene() {
 
             meteor = document.createElement('a-entity')
             meteor.setAttribute('geometry', { primitive: 'sphere', radius: Math.random() * 3 + 0.5 })
-            meteor.setAttribute('material', { shader: 'flat', src: 'imagenes/mundo.png' })
+            meteor.setAttribute('material', { shader: 'flat', src: 'imagenes/mundo2.jpg' })
             meteor.setAttribute('class', 'meteor')
             meteor.object3D.position.set(pos.x, pos.y, pos.z)
 

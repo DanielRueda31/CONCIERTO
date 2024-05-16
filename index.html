@@ -9,7 +9,7 @@
 </head>
 <body>
     
-    <a-scene>
+    <a-scene vr-mode-ui="enabled: true">
       <div id="controles">
         <p>Lista de controles:
           <br>Presionar p para la cámara pincipal.
@@ -411,27 +411,20 @@
       </a-entity>
       </a-entity>
       
-    <!------------ Cámaras Pared ----------->
-    <a-entity id="contedorCamaraPared" position="0 1 0" rotation="0 0 0">
-      <a-entity id="fija2">
-        <a-entity gltf-model="url(modelos/CAMARASINBASE.glb)" scale="10 10 10" position="-14 1 5" rotation="0 90 0"></a-entity>
-
-        <!-- Añade la nueva cámara -->
-      <a-entity id="camerafijaB" camera="active: false" position="-13.6 1 5"   rotation="0 -90 0"></a-entity>
-      </a-entity>
+      <a-entity id="contedorCamaraPared" position="0 1 0" rotation="0 0 0">
+        <a-entity id="fija2">
+          <a-entity gltf-model="url(modelos/CAMARASINBASE.glb)" scale="10 10 10" position="-14 1 5" rotation="0 90 0"></a-entity>
+          <a-entity id="camerafijaB" camera="active: false" camera="userHeight: 1.6" position="-13.6 1 5" rotation="0 -90 0"></a-entity>
+        </a-entity>
       </a-entity>
 
-         
-    <!------------ Cámaras Pared ----------->
-    <a-entity id="contedorCamaraPared" position="0 0 0" rotation="0 0 0">
-      <a-entity id="fija3">
-        <a-entity gltf-model="url(modelos/CAMARACONBASE.glb)" scale="0.005 0.005 0.005" position="-4.5 1 -9" rotation="0 135 0"></a-entity>
-
-        <!-- Añade la nueva cámara -->
-      <a-entity id="camerafijaC" camera="active: false" position="-4.5 2 -8.5"   rotation="0 -120 0"></a-entity>
+      <a-entity id="contedorCamaraPared" position="0 0 0" rotation="0 0 0">
+        <a-entity id="fija3">
+          <a-entity gltf-model="url(modelos/CAMARACONBASE.glb)" scale="0.005 0.005 0.005" position="-4.5 1 -9" rotation="0 135 0"></a-entity>
+          <a-entity id="camerafijaC" camera="active: false" camera="userHeight: 1.6" position="-4.5 2 -8.5" rotation="0 -120 0"></a-entity>
+        </a-entity>
       </a-entity>
-      </a-entity>
-
+      <a-entity id="touchControls" touch-controls controller-cursor="fuse: true; fuzzyfar: true"></a-entity>
 
 
       <script>
@@ -502,7 +495,18 @@
                 activateFixedCamerac();
             }
         });
- AFRAME.registerComponent('move-drone', {
+
+      // Agregar listeners de eventos táctiles para cambiar cámaras
+      document.querySelector('#touchControls').addEventListener('touchstart', function() {
+        activateDroneCamera();
+      });
+
+      document.querySelector('#touchControls').addEventListener('touchstart', function(e) {
+        e.preventDefault(); // Prevenir el comportamiento predeterminado del navegador
+        activateMainCamera();
+      }, { once: true })
+      
+        AFRAME.registerComponent('move-drone', {
     schema: {
       speed: { type: 'number', default: 0.001 },
       maxPositionX: { type: 'number', default: 5 },
